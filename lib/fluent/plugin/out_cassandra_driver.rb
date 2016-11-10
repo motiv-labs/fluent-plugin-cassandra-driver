@@ -91,7 +91,7 @@ module Fluent
           when :string
             value = "'#{value}'"
           when :timeuuid
-            value = Cassandra::Uuid::Generator.new.at(value).to_s
+            value = ::Cassandra::Uuid::Generator.new.at(Time.parse(value)).to_s
           else
         end
 
