@@ -104,7 +104,7 @@ module Fluent
         value
       end
 
-      data_keys.each_index { |index| record.delete(index) } if pop_data_keys
+      data_keys.each { |key| record.delete(key) } if pop_data_keys
 
       # if we have one more schema key than data keys,
       # we can then infer that we should store the event
