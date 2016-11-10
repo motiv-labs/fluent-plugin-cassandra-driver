@@ -66,6 +66,8 @@ module Fluent
 
         cql = "INSERT INTO #{self.columnfamily} (#{self.schema.keys.join(',')}) VALUES (#{values}) USING TTL #{self.ttl}"
 
+        $log.debug "CQL query: #{cql}"
+
         begin
           @session.execute(cql)
         rescue Exception => e
