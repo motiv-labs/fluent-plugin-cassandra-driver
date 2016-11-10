@@ -70,9 +70,13 @@ module Fluent
         $log.debug "Running with values: #{values.to_json}"
 
         begin
-          @session.execute(cql, arguments: values)
+          statement = @session.prepare(cql)
+
+          @session.execute(statement, arguments: values)
         rescue Exception => e
           $log.error "Cannot send record to Cassandra: #{e.message}\nTrace: #{e.backtrace.to_s}"
+
+          raise e
         end
       }
     end
