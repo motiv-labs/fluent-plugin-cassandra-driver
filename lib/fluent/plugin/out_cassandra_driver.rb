@@ -1,8 +1,6 @@
 require 'cassandra'
 require 'msgpack'
 require 'json'
-require 'mutators/string_mutator'
-require 'mutators/timeuuid_mutator'
 
 module Fluent
   class CassandraCqlOutput < BufferedOutput
