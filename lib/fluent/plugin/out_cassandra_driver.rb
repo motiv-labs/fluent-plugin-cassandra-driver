@@ -89,10 +89,9 @@ module Fluent
 
     def build_insert_values(schema_keys, data_keys, record, pop_data_keys)
       values = data_keys.map.with_index do |key, index|
-        value = pop_data_keys ? record.delete(key) : record[key]
-        type = self.schema[schema_keys[index]]
+        value = record[key]
 
-        case type
+        case self.schema[schema_keys[index]]
           when :string
             value = value.to_s
           when :integer
@@ -104,6 +103,8 @@ module Fluent
 
         value
       end
+
+      data_keys.each_index { |index| record.delete(index) } if pop_data_keys
 
       # if we have one more schema key than data keys,
       # we can then infer that we should store the event
