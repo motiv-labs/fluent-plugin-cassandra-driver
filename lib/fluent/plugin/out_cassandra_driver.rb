@@ -78,8 +78,6 @@ module Fluent
 
     private
 
-    @mutators_map = {:string => ::CassandraDriver::StringMutator.new, :timeuuid => ::CassandraDriver::TimeuuidMutator.new}
-
     def get_session(hosts, keyspace)
       cluster = ::Cassandra.cluster(hosts: hosts)
 
@@ -90,9 +88,16 @@ module Fluent
       values = data_keys.map.with_index do |key, index|
         value = pop_data_keys ? record.delete(key) : record[key]
         type = self.schema[schema_keys[index]]
-        mutator = @mutators_map.key?(type) ? @mutators_map[type] : nil
 
-        mutator ? mutator.mutate(value) : value
+        case type
+          when :string
+            value = "'#{value}'"
+          when :timeuuid
+            value = Cassandra::Uuid::Generator.new.at(value).to_s
+          else
+        end
+
+        value
       end
 
       # if we have one more schema key than data keys,
