@@ -91,10 +91,8 @@ module Fluent
         type = self.schema[schema_keys[index]]
 
         case type
-          when :string
-            value = "'#{value}'"
           when :timeuuid
-            value = ::Cassandra::Uuid::Generator.new.at(Time.parse(value)).to_s
+            value = ::Cassandra::Uuid::Generator.new.at(Time.parse(value))
           else
         end
 
