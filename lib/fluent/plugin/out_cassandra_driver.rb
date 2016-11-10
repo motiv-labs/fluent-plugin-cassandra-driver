@@ -64,12 +64,13 @@ module Fluent
 
         values = build_insert_values_string(self.schema.keys, self.data_keys, record, self.pop_data_keys)
 
-        cql = "INSERT INTO #{self.columnfamily} (#{self.schema.keys.join(',')}) VALUES (#{values}) USING TTL #{self.ttl}"
+        cql = "INSERT INTO #{self.columnfamily} (#{self.schema.keys.join(',')}) VALUES (#{values.length.times.map { '?' }.join(',')}) USING TTL #{self.ttl}"
 
         $log.debug "CQL query: #{cql}"
+        $log.debug "Running with values: #{values.to_json}"
 
         begin
-          @session.execute(cql)
+          @session.execute(cql, arguments: values)
         rescue Exception => e
           $log.error "Cannot send record to Cassandra: #{e.message}\nTrace: #{e.backtrace.to_s}"
         end
