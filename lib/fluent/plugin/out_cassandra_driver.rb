@@ -92,7 +92,7 @@ module Fluent
         case type
           when :string
             value = "'#{value}'"
-          when 'timeuuid'
+          when :timeuuid
             value = Cassandra::Uuid::Generator.new.at(value).to_s
           else
         end
