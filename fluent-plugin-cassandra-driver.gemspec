@@ -28,10 +28,8 @@ Gem::Specification.new do |s|
     "VERSION",
     "fluent-plugin-cassandra-driver.gemspec",
     "lib/fluent/plugin/out_cassandra_driver.rb",
-    "spec/cassandra_cql_output_spec.rb",
     "spec/spec.opts",
-    "spec/spec_helper.rb",
-    "spec/support/helpers.rb"
+    "spec/spec_helper.rb"
   ]
   s.homepage = "https://github.com/CSharpRU/fluent-plugin-cassandra-driver".freeze
   s.licenses = ["BSD-3-Clause".freeze]
