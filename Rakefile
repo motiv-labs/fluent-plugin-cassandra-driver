@@ -6,7 +6,7 @@ begin
   Bundler.setup(:default, :development)
 rescue Bundler::BundlerError => e
   $stderr.puts e.message
-  $stderr.puts "Run `bundle install` to install missing gems"
+  $stderr.puts 'Run `bundle install` to install missing gems'
   exit e.status_code
 end
 require 'rake'
@@ -14,13 +14,13 @@ require 'rake'
 require 'jeweler'
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
-  gem.name = "fluent-plugin-cassandra-cql"
-  gem.homepage = "http://github.com/obieq/fluent-plugin-cassandra-cql"
-  gem.license = "MIT"
-  gem.summary = %Q{Fluent output plugin for Cassandra}
-  gem.description = %Q{Fluent output plugin for Cassandra via CQL version 3.0.0}
-  gem.email = "quelland@gmail.com"
-  gem.authors = ["obie quelland"]
+  gem.name = 'fluent-plugin-cassandra-driver'
+  gem.homepage = 'https://github.com/CSharpRU/fluent-plugin-cassandra-driver'
+  gem.license = 'BSD-3-Clause'
+  gem.summary = 'Fluent output plugin for Cassandra'
+  gem.description = 'Fluent output plugin for Cassandra via Datastax Ruby Driver for Apache Cassandra'
+  gem.email = 'c_sharp@mail.ru'
+  gem.authors = ['Yaroslav Lukyanov']
   # dependencies defined in Gemfile
 end
 Jeweler::RubygemsDotOrgTasks.new
@@ -41,7 +41,7 @@ require 'rspec/core/rake_task'
 desc 'Default: run specs.'
 task :default => :spec
 
-desc "Run specs"
+desc 'Run specs'
 RSpec::Core::RakeTask.new do |t|
 
 end

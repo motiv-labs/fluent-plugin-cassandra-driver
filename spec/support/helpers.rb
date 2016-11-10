@@ -23,7 +23,7 @@ module Helpers
 
     # query cassandra to verify data was correctly persisted
     row_num = records.count # non-zero based index
-    events = driver.instance.connection.execute("SELECT * FROM #{column_family_name}")
+    events = driver.instance.session.execute("SELECT * FROM #{column_family_name}")
     events.rows.should eq(records.count)
     events.fetch do | event | # events should be sorted desc by tag, then time
       row_num -= 1 # zero-based index

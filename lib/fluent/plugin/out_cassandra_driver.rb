@@ -1,34 +1,31 @@
-require 'cassandra-cql'
+require 'cassandra'
 require 'msgpack'
 require 'json'
 
 module Fluent
-
   class CassandraCqlOutput < BufferedOutput
-    Fluent::Plugin.register_output('cassandra_cql', self)
+    Fluent::Plugin.register_output('cassandra_driver', self)
 
-    config_param :host,          :string
-    config_param :port,          :integer
-    config_param :keyspace,      :string
-    config_param :columnfamily,  :string
-    config_param :ttl,           :integer, :default => 0
-    config_param :schema,        :string
-    config_param :data_keys,     :string
+    config_param :hosts, :string
+    config_param :keyspace, :string
+    config_param :columnfamily, :string
+    config_param :ttl, :integer, :default => 0
+    config_param :schema, :string
+    config_param :data_keys, :string
 
     # remove keys from the fluentd json event as they're processed
     # for individual columns?
     config_param :pop_data_keys, :bool, :default => true
 
-    def connection
-      @connection ||= get_connection(self.host, self.port, self.keyspace)
+    def session
+      @session ||= get_session(self.hosts, self.keyspace)
     end
 
     def configure(conf)
       super
 
       # perform validations
-      raise ConfigError, "'Host' is required by Cassandra output (ex: localhost, 127.0.0.1, ec2-54-242-141-252.compute-1.amazonaws.com" if self.host.nil?
-      raise ConfigError, "'Port' is required by Cassandra output (ex: 9160)" if self.port.nil?
+      raise ConfigError, "'Hosts' is required by Cassandra output (ex: localhost, 127.0.0.1, ec2-54-242-141-252.compute-1.amazonaws.com" if self.hosts.nil?
       raise ConfigError, "'Keyspace' is required by Cassandra output (ex: FluentdLoggers)" if self.keyspace.nil?
       raise ConfigError, "'ColumnFamily' is required by Cassandra output (ex: events)" if self.columnfamily.nil?
       raise ConfigError, "'Schema' is required by Cassandra output (ex: id,ts,payload)" if self.schema.nil?
@@ -42,15 +39,19 @@ module Fluent
 
       # convert data keys from string to array
       self.data_keys = self.data_keys.split(',')
+
+      # split hosts to array
+      self.hosts = self.hosts.split(',')
     end
 
     def start
       super
-      connection
+      session
     end
 
     def shutdown
       super
+      @session.close if @session
     end
 
     def format(tag, time, record)
@@ -58,28 +59,29 @@ module Fluent
     end
 
     def write(chunk)
-      chunk.msgpack_each  { |record|
+      chunk.msgpack_each { |record|
         values = build_insert_values_string(self.schema.keys, self.data_keys, record, self.pop_data_keys)
-        cql = "INSERT INTO #{self.columnfamily} (#{self.schema.keys.join(',')}) " +
-                            "VALUES (#{values}) " +
-                            "USING TTL #{self.ttl}"
-        @connection.execute(cql)
+
+        cql = "INSERT INTO #{self.columnfamily} (#{self.schema.keys.join(',')}) VALUES (#{values}) USING TTL #{self.ttl}"
+
+        @session.execute(cql)
       }
     end
 
     private
 
-    def get_connection(host, port, keyspace)
-      connection_string = "#{host}:#{port}"
-      ::CassandraCQL::Database.new(connection_string, {:keyspace => "\"#{keyspace}\"", :cql_version => "3.0.0"})
+    def get_session(hosts, keyspace)
+      cluster = ::Cassandra.cluster(hosts: hosts)
+
+      cluster.connect(keyspace)
     end
 
     def build_insert_values_string(schema_keys, data_keys, record, pop_data_keys)
       values = data_keys.map.with_index do |key, index|
         if pop_data_keys
-          schema[schema_keys[index]] == :string ? "'#{record.delete(key)}'" : record.delete(key)
+          self.schema[schema_keys[index]] == :string ? "'#{record.delete(key)}'" : record.delete(key)
         else
-          schema[schema_keys[index]] == :string ? "'#{record[key]}'" : record[key]
+          self.schema[schema_keys[index]] == :string ? "'#{record[key]}'" : record[key]
         end
       end
 
@@ -101,9 +103,7 @@ module Fluent
                   end
       end
 
-      return values.join(',')
+      values.join(',')
     end
-
   end
-
 end

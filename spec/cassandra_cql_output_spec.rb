@@ -23,7 +23,7 @@ describe Fluent::CassandraCqlOutput do
   after(:each) do
     d = Fluent::Test::BufferedOutputTestDriver.new(Fluent::CassandraCqlOutput, 'test')
     d.configure(CONFIG)
-    d.instance.connection.execute("TRUNCATE #{SPEC_COLUMN_FAMILY}")
+    d.instance.session.execute("TRUNCATE #{SPEC_COLUMN_FAMILY}")
   end
 
   def set_config_value(config, config_name, value)
@@ -140,14 +140,14 @@ describe Fluent::CassandraCqlOutput do
 
         # verify record... should return in less than one sec if hitting
         #                  cassandra running on localhost
-        events = driver.instance.connection.execute("SELECT * FROM #{SPEC_COLUMN_FAMILY} where ts = #{time}")
+        events = driver.instance.session.execute("SELECT * FROM #{SPEC_COLUMN_FAMILY} where ts = #{time}")
         events.rows.should eq(1)
 
         # now, sleep long enough for the event to be expired from cassandra
         sleep(ttl + 1)
 
         # re-query and verify that no events were returned
-        events = driver.instance.connection.execute("SELECT * FROM #{SPEC_COLUMN_FAMILY} where ts = #{time}")
+        events = driver.instance.session.execute("SELECT * FROM #{SPEC_COLUMN_FAMILY} where ts = #{time}")
         events.rows.should eq(0)
       end
 
