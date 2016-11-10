@@ -62,7 +62,7 @@ module Fluent
       chunk.msgpack_each { |record|
         $log.debug "Sending a new record to Cassandra: #{record.to_json}"
 
-        values = build_insert_values_string(self.schema.keys, self.data_keys, record, self.pop_data_keys)
+        values = build_insert_values(self.schema.keys, self.data_keys, record, self.pop_data_keys)
 
         cql = "INSERT INTO #{self.columnfamily} (#{self.schema.keys.join(',')}) VALUES (#{values.length.times.map { '?' }.join(',')}) USING TTL #{self.ttl}"
 
@@ -85,7 +85,7 @@ module Fluent
       cluster.connect(keyspace)
     end
 
-    def build_insert_values_string(schema_keys, data_keys, record, pop_data_keys)
+    def build_insert_values(schema_keys, data_keys, record, pop_data_keys)
       values = data_keys.map.with_index do |key, index|
         value = pop_data_keys ? record.delete(key) : record[key]
         type = self.schema[schema_keys[index]]
@@ -119,7 +119,7 @@ module Fluent
                   end
       end
 
-      values.join(',')
+      values
     end
   end
 end
