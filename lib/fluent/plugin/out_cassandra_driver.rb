@@ -70,9 +70,7 @@ module Fluent
         $log.debug "Running with values: #{values.to_json}"
 
         begin
-          statement = @session.prepare(cql)
-
-          @session.execute(statement, arguments: values)
+          @session.execute(cql, arguments: values)
         rescue Exception => e
           $log.error "Cannot send record to Cassandra: #{e.message}\nTrace: #{e.backtrace.to_s}"
 
@@ -95,6 +93,10 @@ module Fluent
         type = self.schema[schema_keys[index]]
 
         case type
+          when :string
+            value = value.to_s
+          when :integer
+            value = value.to_i
           when :timeuuid
             value = ::Cassandra::Uuid::Generator.new.at(Time.parse(value))
           else
