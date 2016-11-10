@@ -98,6 +98,8 @@ module Fluent
             value = value.to_i
           when :timeuuid
             value = ::Cassandra::Uuid::Generator.new.at(Time.parse(value))
+          when :time
+            value = Time.parse(value)
           else
         end
 
