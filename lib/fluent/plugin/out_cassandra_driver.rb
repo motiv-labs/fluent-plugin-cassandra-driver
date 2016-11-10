@@ -1,6 +1,8 @@
 require 'cassandra'
 require 'msgpack'
 require 'json'
+require 'mutators/string_mutator'
+require 'mutators/timeuuid_mutator'
 
 module Fluent
   class CassandraCqlOutput < BufferedOutput
@@ -76,6 +78,8 @@ module Fluent
 
     private
 
+    @mutators_map = {:string => ::CassandraDriver::StringMutator.new, :timeuuid => ::CassandraDriver::TimeuuidMutator.new}
+
     def get_session(hosts, keyspace)
       cluster = ::Cassandra.cluster(hosts: hosts)
 
@@ -84,11 +88,11 @@ module Fluent
 
     def build_insert_values_string(schema_keys, data_keys, record, pop_data_keys)
       values = data_keys.map.with_index do |key, index|
-        if pop_data_keys
-          self.schema[schema_keys[index]] == :string ? "'#{record.delete(key)}'" : record.delete(key)
-        else
-          self.schema[schema_keys[index]] == :string ? "'#{record[key]}'" : record[key]
-        end
+        value = pop_data_keys ? record.delete(key) : record[key]
+        type = self.schema[schema_keys[index]]
+        mutator = @mutators_map.key?(type) ? @mutators_map[type] : nil
+
+        mutator ? mutator.mutate(value) : value
       end
 
       # if we have one more schema key than data keys,
