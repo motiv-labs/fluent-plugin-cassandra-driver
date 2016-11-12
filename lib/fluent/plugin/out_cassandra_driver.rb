@@ -91,7 +91,12 @@ module Fluent
 
     def build_insert_values(record)
       values = self.schema.map.with_index { |column_family_key, mapping|
-        record_key, type = mapping.first
+        if mapping.class == Hash
+          record_key, type = mapping.first
+        else
+          record_key, type = column_family_key, mapping
+        end
+
         value = record[record_key]
 
         case type

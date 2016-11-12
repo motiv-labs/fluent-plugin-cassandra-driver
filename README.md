@@ -35,7 +35,9 @@ via RubyGems
     
 ### Schema example
     # hash of hashes :column_damily_key => {:fluentd_record_key => :type_from_list}
-    '{:id => {:id => nil}, :timestamp => {:timestamp => :time}}'
+    # or :column_damily_key => :type_from_list
+    # then :fluentd_record_key will be the same as :column_damily_key
+    '{:id => {:ident => nil}, :timestamp => {:timestamp => :time}}'
     
 Available mappings:
 * :integer
