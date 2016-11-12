@@ -29,7 +29,7 @@ via RubyGems
       columnfamily logs          # cassandra column family
       ttl 60                     # cassandra ttl (optional, default is 0)
       schema                     # cassandra column family schema (see example below)
-      pop_data_keys              # keep or pop key/values from the fluentd hash when storing it as json (optional, default is false)
+      pop_data_keys              # pop values from the fluentd hash when storing it as json (optional, default is true)
       json_column json           # column where store all remaining data from fluentd (optional)
     </match>
     
