@@ -39,9 +39,6 @@ module Fluent
 
       raise ConfigError, "'Schema' must contain at least one column" if self.schema.keys.length < 1
 
-      # convert data keys from string to array
-      self.data_keys = self.data_keys.split(',')
-
       # split hosts to array
       self.hosts = self.hosts.split(',')
     end
