@@ -10,17 +10,16 @@ and Cassandra 1.2 - 3.x
 via RubyGems
 
     fluent-gem install fluent-plugin-cassandra-driver
+    td-agent-gem install fluent-plugin-cassandra-driver
 
 # Quick Start
 
 ## Cassandra Configuration
-    # create keyspace (via CQL)
-      CREATE KEYSPACE \"metrics\" WITH strategy_class='org.apache.cassandra.locator.SimpleStrategy' AND strategy_options:replication_factor=1;
+    # Create keyspace (via CQL)
+      CREATE KEYSPACE metrics WITH strategy_class='org.apache.cassandra.locator.SimpleStrategy' AND strategy_options:replication_factor=1;
 
-    # create table (column family)
-      CREATE TABLE logs (id varchar, ts bigint, payload text, PRIMARY KEY (id, ts)) WITH CLUSTERING ORDER BY (ts DESC);
-
-    # NOTE: schema definition should match that specified in the Fluentd.conf configuration file (see below)
+    # Create table (column family)
+      CREATE TABLE logs (id varchar, timestamp timestamp, json text, PRIMARY KEY (id, timestamp)) WITH CLUSTERING ORDER BY (timestamp DESC);
 
 ## Fluentd.conf Configuration
     <match cassandra.**>
@@ -28,11 +27,23 @@ via RubyGems
       hosts 127.0.0.1            # comma delimited string of hosts
       keyspace metrics           # cassandra keyspace
       columnfamily logs          # cassandra column family
-      ttl 60                     # cassandra ttl *optional => default is 0*
-      schema                     # cassandra column family schema *hash where keys => column names and values => data types* for example: {:id => :string}
-      data_keys                  # comma delimited string of the fluentd hash's keys
-      pop_data_keys              # keep or pop key/values from the fluentd hash when storing it as json
+      ttl 60                     # cassandra ttl (optional, default is 0)
+      schema                     # cassandra column family schema (see example below)
+      pop_data_keys              # keep or pop key/values from the fluentd hash when storing it as json (optional, default is false)
+      json_column json           # column where store all remaining data from fluentd (optional)
     </match>
+    
+### Schema example
+    # hash of hashes :column_damily_key => {:fluentd_record_key => :type_from_list}
+    '{:id => {:id => nil}, :timestamp => {:timestamp => :time}}'
+    
+Available mappings:
+* :integer
+* :string
+* :timeuuid
+* :time
+    
+All nil types will be recognized as string.
     
 # Tests
 
