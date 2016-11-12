@@ -87,7 +87,7 @@ module Fluent
     end
 
     def build_insert_values(record)
-      values = self.schema.map.with_index { |column_family_key, mapping|
+      values = self.schema.map { |column_family_key, mapping|
         if mapping.class == Hash
           record_key, type = mapping.first
         else
@@ -108,15 +108,15 @@ module Fluent
             value = value.to_s
         end
 
-        [column_family_key, value]
+        [column_family_key.to_s, value]
       }.to_h
 
-      self.schema.each_with_index { |column_family_key, mapping|
+      self.schema.each { |column_family_key, mapping|
         record.delete(mapping.class == Hash ? mapping.first.first : column_family_key)
       } if self.pop_data_keys
 
       # if we have one more data in record and json column
-      # then store all remaining data in that column
+      # then store all remaining data into that column
       values[self.json_column] = record.to_json if self.json_column and record.length > 0
 
       values
