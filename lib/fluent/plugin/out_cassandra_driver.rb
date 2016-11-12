@@ -94,7 +94,7 @@ module Fluent
           record_key, type = column_family_key, mapping
         end
 
-        value = record[record_key]
+        value = record[record_key.to_s]
 
         case type
           when :integer
@@ -112,7 +112,9 @@ module Fluent
       }.to_h
 
       self.schema.each { |column_family_key, mapping|
-        record.delete(mapping.class == Hash ? mapping.first.first : column_family_key)
+        record_key = mapping.class == Hash ? mapping.first.first : column_family_key
+
+        record.delete(record_key.to_s)
       } if self.pop_data_keys
 
       # if we have one more data in record and json column
