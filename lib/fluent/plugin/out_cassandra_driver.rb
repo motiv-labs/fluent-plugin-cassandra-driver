@@ -111,7 +111,9 @@ module Fluent
         [column_family_key, value]
       }.to_h
 
-      self.schema.each { |mapping| record.delete(mapping.first.first) } if self.pop_data_keys
+      self.schema.each_with_index { |column_family_key, mapping|
+        record.delete(mapping.class == Hash ? mapping.first.first : column_family_key)
+      } if self.pop_data_keys
 
       # if we have one more data in record and json column
       # then store all remaining data in that column
