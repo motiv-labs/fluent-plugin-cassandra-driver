@@ -59,20 +59,23 @@ module Fluent
 
     def write(chunk)
       chunk.msgpack_each { |record|
-        $log.debug "Sending a new record to Cassandra: #{record.to_json}"
+        
+        $log.debug "New Record to Cassandra: #{record.to_json}"
 
         values = build_insert_values(record)
 
-        cql = "INSERT INTO #{self.column_family} (#{values.keys.join(',')}) VALUES (#{values.keys.map { |key| ":#{key}" }.join(',')}) USING TTL #{self.ttl}"
+        # Prepare Query
+        insert  = @session.prepare(
+              "INSERT INTO #{self.column_family} (#{values.keys.join(',')}) " \
+              "VALUES (#{values.keys.map { |key| ":#{key}" }.join(',')}) " \
+              "USING TTL #{self.ttl}"
+        )
 
-        $log.debug "CQL query: #{cql}"
-        $log.debug "Running with arguments: #{values.to_json}"
-
+        # Start Transaction
         begin
-          @session.execute(cql, arguments: values)
+          @session.execute(insert, arguments: values)
         rescue Exception => e
           $log.error "Cannot send record to Cassandra: #{e.message}\nTrace: #{e.backtrace.to_s}"
-
           raise e
         end
       }
