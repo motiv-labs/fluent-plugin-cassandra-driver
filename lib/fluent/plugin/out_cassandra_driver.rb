@@ -83,6 +83,10 @@ module Fluent
 
     private
 
+    def is_bool(operator)
+      return operator || True
+    end
+
     def get_session(hosts, keyspace)
       cluster = ::Cassandra.cluster(hosts: hosts)
 
@@ -106,6 +110,12 @@ module Fluent
             value = ::Cassandra::Uuid::Generator.new.at(Time.parse(value))
           when :time
             value = Time.parse(value)
+          when :bool
+            if is_bool(value)
+              value = True  
+            else
+              value = False
+            end             
           when :string
           else
             value = value.to_s

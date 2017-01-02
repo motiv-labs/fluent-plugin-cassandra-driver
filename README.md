@@ -54,6 +54,7 @@ Available mappings:
 * :string
 * :timeuuid
 * :time
+* :bool
     
 All nil types will be recognized as string.
     
