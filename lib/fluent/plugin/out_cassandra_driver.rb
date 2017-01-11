@@ -63,13 +63,12 @@ module Fluent
         $log.debug "New Record to Cassandra: #{record.to_json}"
 
         values = build_insert_values(record)
-
+        # Query
+        query = "INSERT INTO #{self.column_family} (#{values.keys.join(',')}) " \
+                "VALUES (#{values.keys.map { |key| ":#{key}" }.join(',')}) " \
+                "USING TTL #{self.ttl}"
         # Prepare Query
-        insert  = @session.prepare(
-              "INSERT INTO #{self.column_family} (#{values.keys.join(',')}) " \
-              "VALUES (#{values.keys.map { |key| ":#{key}" }.join(',')}) " \
-              "USING TTL #{self.ttl}"
-        )
+        insert  = @session.prepare(query)
 
         # Start Transaction
         begin
@@ -83,8 +82,8 @@ module Fluent
 
     private
 
-    def is_bool(operator)
-      return operator || True
+    def is_boolean(op)
+      return op && true
     end
 
     def get_session(hosts, keyspace)
@@ -111,11 +110,11 @@ module Fluent
           when :time
             value = Time.parse(value)
           when :bool
-            if is_bool(value)
-              value = True  
+            if is_boolean(value)
+              value = true
             else
-              value = False
-            end             
+              value = false
+            end
           when :string
           else
             value = value.to_s
