@@ -25,7 +25,7 @@ via RubyGems
       CREATE KEYSPACE metrics WITH strategy_class='org.apache.cassandra.locator.SimpleStrategy' AND strategy_options:replication_factor=1;
 
     # Create table (column family)
-      CREATE TABLE logs (id varchar, timestamp timestamp, json text, PRIMARY KEY (id, timestamp)) WITH CLUSTERING ORDER BY (timestamp DESC);
+      CREATE TABLE logs (id varchar, ts timestamp, json text, PRIMARY KEY (id, ts)) WITH CLUSTERING ORDER BY (ts DESC);
 
 ## Fluentd.conf Configuration
     <match cassandra.**>
@@ -41,13 +41,16 @@ via RubyGems
       
       pop_data_keys              # pop values from the fluentd hash when storing it as json (optional, default is true)
       json_column json           # column where store all remaining data from fluentd (optional)
+
+      timestamp_flag true        # flag to enable or disable server timestamp (optional, default is false) 
+      timestamp_column ts        # column where store server timestamp automatically in column family (optional, default is 'ts')
     </match>
     
 ### Schema example
     # hash of hashes :column_damily_key => {:fluentd_record_key => :type_from_list}
     # or :column_damily_key => :type_from_list
     # then :fluentd_record_key will be the same as :column_damily_key
-    '{:id => {:ident => nil}, :timestamp => {:timestamp => :time}}'
+    '{:id => {:ident => nil}, :ts => {:timestamp => :time}}'
     
 Available mappings:
 * :integer

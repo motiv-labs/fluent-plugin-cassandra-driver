@@ -19,6 +19,10 @@ module Fluent
     # column to store all data keys as json
     config_param :json_column, :string
 
+    # column to store ti
+    config_param :timestamp_flag, :bool, :default => false
+    config_param :timestamp_column, :string, :default => "ts"
+
     def session
       @session ||= get_session(self.hosts, self.keyspace)
     end
@@ -63,9 +67,10 @@ module Fluent
         $log.debug "New Record to Cassandra: #{record.to_json}"
 
         values = build_insert_values(record)
+
         # Query
-        query = "INSERT INTO #{self.column_family} (#{values.keys.join(',')}) " \
-                "VALUES (#{values.keys.map { |key| ":#{key}" }.join(',')}) " \
+        query = "INSERT INTO #{self.column_family} (#{values.keys.join(',')}" + ( self.timestamp_flag ? ", #{self.timestamp_column}" : "" ) + ") " \
+                "VALUES (#{values.keys.map { |key| ":#{key}" }.join(',')}" + ( self.timestamp_flag ? ", toUnixTimestamp(now())" : "" ) + ") " \
                 "USING TTL #{self.ttl}"
         # Prepare Query
         insert  = @session.prepare(query)
