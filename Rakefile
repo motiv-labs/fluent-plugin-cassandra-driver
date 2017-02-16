@@ -17,12 +17,12 @@ require 'jeweler'
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
   gem.name = 'fluent-plugin-cassandra-driver'
-  gem.homepage = 'https://github.com/CSharpRU/fluent-plugin-cassandra-driver'
+  gem.homepage = 'https://github.com/adiazgalache/fluent-plugin-cassandra-driver.git'
   gem.license = 'BSD-3-Clause'
   gem.summary = 'Fluent output plugin for Cassandra'
   gem.description = 'Fluent output plugin for Cassandra via Datastax Ruby Driver for Apache Cassandra'
-  gem.email = 'c_sharp@mail.ru'
-  gem.authors = ['Yaroslav Lukyanov']
+  gem.email = ['c_sharp@mail.ru','alejandro.galache@gmail.com']
+  gem.authors = ['Yaroslav Lukyanov','Alejandro Diaz']
   # dependencies defined in Gemfile
 end
 

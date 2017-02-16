@@ -6,12 +6,12 @@
 
 Gem::Specification.new do |s|
   s.name = "fluent-plugin-cassandra-driver".freeze
-  s.version = "1.0.2"
+  s.version = "1.0.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0".freeze) if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib".freeze]
   s.authors = ["Yaroslav Lukyanov".freeze, "Alejandro Díaz".freeze]
-  s.date = "2016-11-12"
+  s.date = "2017-02-16"
   s.description = "Fluent output plugin for Cassandra via Datastax Ruby Driver for Apache Cassandra".freeze
   s.email = ["c_sharp@mail.ru".freeze,"alejandro.galache@gmail.com".freeze]
   s.extra_rdoc_files = [
@@ -31,7 +31,7 @@ Gem::Specification.new do |s|
     "spec/spec.opts",
     "spec/spec_helper.rb"
   ]
-  s.homepage = "https://github.com/CSharpRU/fluent-plugin-cassandra-driver".freeze
+  s.homepage = "https://github.com/adiazgalache/fluent-plugin-cassandra-driver".freeze
   s.licenses = ["BSD-3-Clause".freeze]
   s.rubygems_version = "2.6.8".freeze
   s.summary = "Fluent output plugin for Cassandra".freeze
@@ -66,4 +66,3 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<simplecov>.freeze, [">= 0"])
   end
 end
-

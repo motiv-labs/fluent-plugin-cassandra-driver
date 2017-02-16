@@ -65,9 +65,7 @@ module Fluent
       chunk.msgpack_each { |record|
         
         $log.debug "New Record to Cassandra: #{record.to_json}"
-
         values = build_insert_values(record)
-
         # Query
         query = "INSERT INTO #{self.column_family} (#{values.keys.join(',')}" + ( self.timestamp_flag ? ", #{self.timestamp_column}" : "" ) + ") " \
                 "VALUES (#{values.keys.map { |key| ":#{key}" }.join(',')}" + ( self.timestamp_flag ? ", toUnixTimestamp(now())" : "" ) + ") " \
@@ -125,7 +123,7 @@ module Fluent
             value = value.to_s
         end
 
-        [column_family_key.to_s, value]
+        [column_family_key.to_s.downcase, value]
       }.to_h
 
       self.schema.each { |column_family_key, mapping|
