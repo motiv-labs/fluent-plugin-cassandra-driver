@@ -108,6 +108,8 @@ module Fluent
         case type
           when :integer
             value = value.to_i
+          when :float
+            value = value.to_f          
           when :timeuuid
             value = ::Cassandra::Uuid::Generator.new.at(Time.parse(value))
           when :time
