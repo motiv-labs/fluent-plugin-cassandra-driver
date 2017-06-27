@@ -17,7 +17,7 @@ module Fluent
     config_param :pop_data_keys, :bool, :default => true
 
     # column to store all data keys as json
-    config_param :json_column, :string
+    config_param :json_column, :string, :default => false
 
     # column to store ti
     config_param :timestamp_flag, :bool, :default => false
