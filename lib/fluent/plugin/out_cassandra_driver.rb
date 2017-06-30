@@ -17,7 +17,7 @@ module Fluent
     config_param :pop_data_keys, :bool, :default => true
 
     # column to store all data keys as json
-    config_param :json_column, :string
+    config_param :json_column, :string, :default => false
 
     # column to store ti
     config_param :timestamp_flag, :bool, :default => false
@@ -108,6 +108,8 @@ module Fluent
         case type
           when :integer
             value = value.to_i
+          when :float
+            value = value.to_f          
           when :timeuuid
             value = ::Cassandra::Uuid::Generator.new.at(Time.parse(value))
           when :time
