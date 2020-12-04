@@ -114,7 +114,7 @@ module Fluent
             value = value.to_f
           when :timeuuid
             $log.info "I'm in timeuuid"
-            value = ::Cassandra::Uuid::Generator.new.at(Time.parse(value))
+            value = ::Cassandra::Uuid::Generator.new.at(Time.parse(value).to_i)
           when :time
             $log.info "I'm in time"
             value = Time.parse(value)
