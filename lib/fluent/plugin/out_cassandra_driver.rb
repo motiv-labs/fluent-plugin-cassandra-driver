@@ -70,9 +70,10 @@ module Fluent
         query = "INSERT INTO #{self.column_family} (#{values.keys.join(',')}" + ( self.timestamp_flag ? ", #{self.timestamp_column}" : "" ) + ") " \
                 "VALUES (#{values.keys.map { |key| ":#{key}" }.join(',')}" + ( self.timestamp_flag ? ", toUnixTimestamp(now())" : "" ) + ") " \
                 "USING TTL #{self.ttl}"
+        $log.info "I'm after the query and before insert"
         # Prepare Query
         insert  = @session.prepare(query)
-
+        $log.info "I'm after the insert"
         # Start Transaction
         begin
           @session.execute(insert, arguments: values)
@@ -96,15 +97,16 @@ module Fluent
     end
 
     def build_insert_values(record)
+      $log.info "I'm at the top of build_insert_values"
       values = self.schema.map { |column_family_key, mapping|
         if mapping.class == Hash
           record_key, type = mapping.first
         else
           record_key, type = column_family_key, mapping
         end
-
+        $log.info "I'm right after values mapping"
         value = record[record_key.to_s]
-
+        $log.info "I'm right before case"
         case type
           when :integer
             value = value.to_i
