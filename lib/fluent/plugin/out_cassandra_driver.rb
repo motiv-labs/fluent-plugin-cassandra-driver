@@ -109,16 +109,19 @@ module Fluent
         $log.info "I'm right before case"
         case type
           when :integer
+            $log.info "I'm in integer. value: " + value.to_s
             value = value.to_i
           when :float
+            $log.info "I'm in float. value: " + value.to_s
             value = value.to_f
           when :timeuuid
-            $log.info "I'm in timeuuid"
-            value = ::Cassandra::Uuid::Generator.new.at(Time.parse(value).to_i)
+            $log.info "I'm in timeuuid. value: " + value.to_s
+            value = ::Cassandra::Uuid::Generator.new.at(Time.parse(value))
           when :time
-            $log.info "I'm in time"
+            $log.info "I'm in time. value: " + value.to_s
             value = Time.parse(value)
           when :bool
+            $log.info "I'm in bool. value: " + value.to_s
             if is_boolean(value)
               value = true
             else
@@ -126,6 +129,7 @@ module Fluent
             end
           when :string
           else
+            $log.info "I'm in else. value: " + value.to_s
             value = value.to_s
         end
 
