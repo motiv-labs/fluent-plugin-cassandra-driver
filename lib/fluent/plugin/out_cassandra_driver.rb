@@ -111,9 +111,10 @@ module Fluent
           when :float
             value = value.to_f
           when :timeuuid
-          $log.info "I'm in timeuuid"
+            $log.info "I'm in timeuuid"
             value = ::Cassandra::Uuid::Generator.new.at(Time.parse(value))
           when :time
+            $log.info "I'm in time"
             value = Time.parse(value)
           when :bool
             if is_boolean(value)
