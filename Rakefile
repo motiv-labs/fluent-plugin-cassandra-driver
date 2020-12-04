@@ -17,7 +17,7 @@ require 'jeweler'
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
   gem.name = 'fluent-plugin-cassandra-driver'
-  gem.homepage = 'https://github.com/adiazgalache/fluent-plugin-cassandra-driver.git'
+  gem.homepage = 'https://github.com/motiv-labs/fluent-plugin-cassandra-driver'
   gem.license = 'BSD-3-Clause'
   gem.summary = 'Fluent output plugin for Cassandra'
   gem.description = 'Fluent output plugin for Cassandra via Datastax Ruby Driver for Apache Cassandra'
