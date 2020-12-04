@@ -63,7 +63,7 @@ module Fluent
 
     def write(chunk)
       chunk.msgpack_each { |record|
-        
+        $log.info "I'm a new message to test"
         $log.debug "New Record to Cassandra: #{record.to_json}"
         values = build_insert_values(record)
         # Query
@@ -109,10 +109,12 @@ module Fluent
           when :integer
             value = value.to_i
           when :float
-            value = value.to_f          
+            value = value.to_f
           when :timeuuid
+            $log.info "I'm in timeuuid"
             value = ::Cassandra::Uuid::Generator.new.at(Time.parse(value))
           when :time
+            $log.info "I'm in time"
             value = Time.parse(value)
           when :bool
             if is_boolean(value)
