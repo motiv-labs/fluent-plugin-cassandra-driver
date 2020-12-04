@@ -63,7 +63,7 @@ module Fluent
 
     def write(chunk)
       chunk.msgpack_each { |record|
-        
+        $log.info "I'm a new message to test"
         $log.debug "New Record to Cassandra: #{record.to_json}"
         values = build_insert_values(record)
         # Query
