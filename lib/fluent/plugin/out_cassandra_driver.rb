@@ -63,17 +63,14 @@ module Fluent
 
     def write(chunk)
       chunk.msgpack_each { |record|
-        $log.info "I'm a new message to test"
         $log.debug "New Record to Cassandra: #{record.to_json}"
         values = build_insert_values(record)
         # Query
         query = "INSERT INTO #{self.column_family} (#{values.keys.join(',')}" + ( self.timestamp_flag ? ", #{self.timestamp_column}" : "" ) + ") " \
                 "VALUES (#{values.keys.map { |key| ":#{key}" }.join(',')}" + ( self.timestamp_flag ? ", toUnixTimestamp(now())" : "" ) + ") " \
                 "USING TTL #{self.ttl}"
-        $log.info "I'm after the query and before insert"
         # Prepare Query
         insert  = @session.prepare(query)
-        $log.info "I'm after the insert"
         # Start Transaction
         begin
           @session.execute(insert, arguments: values)
@@ -97,40 +94,30 @@ module Fluent
     end
 
     def build_insert_values(record)
-      $log.info "I'm at the top of build_insert_values"
       values = self.schema.map { |column_family_key, mapping|
         if mapping.class == Hash
           record_key, type = mapping.first
         else
           record_key, type = column_family_key, mapping
         end
-        $log.info "I'm right after values mapping"
         value = record[record_key.to_s]
-        $log.info "I'm right before case"
         case type
           when :integer
-            $log.info "I'm in integer. value: " + value.to_s
             value = value.to_i
           when :float
-            $log.info "I'm in float. value: " + value.to_s
             value = value.to_f
           when :timeuuid
-            $log.info "I'm in timeuuid. value: " + value.to_s
             value = ::Cassandra::Uuid::Generator.new.at(Time.parse(value))
           when :time
-            $log.info "I'm in time. value: " + value.to_s
             value = Time.parse(value)
           when :bool
-            $log.info "I'm in bool. value: " + value.to_s
             if is_boolean(value)
               value = true
             else
               value = false
             end
           when :string
-          else
-            $log.info "I'm in else. value: " + value.to_s
-            value = value.to_s
+          else            value = value.to_s
         end
 
         [column_family_key.to_s.downcase, value]
