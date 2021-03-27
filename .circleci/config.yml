@@ -2,8 +2,6 @@ jobs:
   build:
     machine:
       image: ubuntu-1604:202004-01
-    environment:
-    GIT_COMMIT_DESC: git log --format=oneline -n 1 $CIRCLE_SHA1
     steps:
       - checkout
       - run:
@@ -25,10 +23,14 @@ jobs:
             docker push motivlabs/fluentd:impulse-latest
             echo "Pushed Latest Image Name"
 
-            echo commit message is: ${GIT_COMMIT_DESC}
+            echo "export COMMIT_MESSAGE=\"$(git log --format=oneline -n 1 $CIRCLE_SHA1)\"" >> ~/.bashrc
+            echo "commit message is: ${COMMIT_MESSAGE}"
+
+            COMMIT_MESSAGE=$(git log --format=oneline -n 1 $CIRCLE_SHA1)
+            echo "commit message is now: ${COMMIT_MESSAGE}"
 
             echo "Running Script to Update Impulse Docker-Compose with Correct Image"
-            .circleci/update-impulse.sh "fluentd-impulse" ${IMAGE_NAME} ${GITHUB_OAUTH} ${GIT_COMMIT_DESC}
+            .circleci/update-impulse.sh "fluentd-impulse" ${IMAGE_NAME} ${GITHUB_OAUTH} ${COMMIT_MESSAGE}
             echo "Impulse Updated"
 
 
