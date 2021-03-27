@@ -19,13 +19,12 @@ curl -H 'Authorization: token '"$3"'' -H 'Accept: application/vnd.github.v3.raw'
 sed -i "s+motivlabs/$1:.*+$2+g" astro.conf
 # echo pushing file to GITHUB
 
-echo "$4"
 if [[ $(echo "$4" | grep -c -i "#nosmoke") == 1 ]]; then
   echo "no smoke"
-#  curl -X PUT -H 'Authorization: token '"$3"'' -d '{"message":"[skip ci] updated fluentd-impulse image","content":"'"$(base64 -w0 astro.conf)"'","sha":'"$(curl -s -X GET -H 'Authorization: token '"$3"'' https://api.github.com/repos/motiv-labs/impulse/contents/docker-tools/compose-template/config/astro.conf | jq .sha)"'}' -L https://api.github.com/repos/motiv-labs/impulse/contents/docker-tools/compose-template/config/astro.conf
+  curl -X PUT -H 'Authorization: token '"$3"'' -d '{"message":"[skip ci] updated fluentd-impulse image","content":"'"$(base64 -w0 astro.conf)"'","sha":'"$(curl -s -X GET -H 'Authorization: token '"$3"'' https://api.github.com/repos/motiv-labs/impulse/contents/docker-tools/compose-template/config/astro.conf | jq .sha)"'}' -L https://api.github.com/repos/motiv-labs/impulse/contents/docker-tools/compose-template/config/astro.conf
 else
   echo "smoke"
-#  curl -X PUT -H 'Authorization: token '"$3"'' -d '{"message":"updated fluentd-impulse image","content":"'"$(base64 -w0 astro.conf)"'","sha":'"$(curl -s -X GET -H 'Authorization: token '"$3"'' https://api.github.com/repos/motiv-labs/impulse/contents/docker-tools/compose-template/config/astro.conf | jq .sha)"'}' -L https://api.github.com/repos/motiv-labs/impulse/contents/docker-tools/compose-template/config/astro.conf
+  curl -X PUT -H 'Authorization: token '"$3"'' -d '{"message":"updated fluentd-impulse image","content":"'"$(base64 -w0 astro.conf)"'","sha":'"$(curl -s -X GET -H 'Authorization: token '"$3"'' https://api.github.com/repos/motiv-labs/impulse/contents/docker-tools/compose-template/config/astro.conf | jq .sha)"'}' -L https://api.github.com/repos/motiv-labs/impulse/contents/docker-tools/compose-template/config/astro.conf
 fi
 
 # update googlecloud image
