@@ -23,9 +23,6 @@ jobs:
             docker push motivlabs/fluentd:impulse-latest
             echo "Pushed Latest Image Name"
 
-            echo "export COMMIT_MESSAGE=\"$(git log --format=oneline -n 1 $CIRCLE_SHA1)\"" >> ~/.bashrc
-            echo "commit message is: ${COMMIT_MESSAGE}"
-
             COMMIT_MESSAGE=$(git log --format=oneline -n 1 $CIRCLE_SHA1)
             echo "commit message is now: ${COMMIT_MESSAGE}"
 
