@@ -2,7 +2,6 @@ jobs:
   build:
     machine:
       image: ubuntu-1604:202004-01
-    resource_class: large
     steps:
       - checkout
       - run:
@@ -12,8 +11,8 @@ jobs:
             docker login --username ${DOCKERHUB_USERNAME} --password ${DOCKERHUB_PASSWORD}
 
             echo "building image"
-            IMAGE_NAME="motivlabs/fluentd-impulse:$(date +%Y%m%d%H%M%S)-${CIRCLE_SHA1:0:6}"
-            docker build --build-arg GITHUB_USER=${GITHUB_COMMIT_USER} --build-arg GITHUB_TOKEN=${GITHUB_OAUTH} -t ${IMAGE_NAME} -t motivlabs/fluentd-impulse:latest .
+            IMAGE_NAME="motivlabs/fluentd:impulse-$(date +%Y%m%d%H%M%S)-${CIRCLE_SHA1:0:6}"
+            docker build --build-arg GITHUB_USER=${GITHUB_COMMIT_USER} --build-arg GITHUB_TOKEN=${GITHUB_OAUTH} -t ${IMAGE_NAME} -t motivlabs/fluentd:latest .
             echo "Finished Building Service Image"
 
             echo "Pushing Service Images to Docker Hub"
