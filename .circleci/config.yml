@@ -12,7 +12,7 @@ jobs:
 
             echo "building image"
             IMAGE_NAME="motivlabs/fluentd:impulse-$(date +%Y%m%d%H%M%S)-${CIRCLE_SHA1:0:6}"
-            docker build --build-arg GITHUB_USER=${GITHUB_COMMIT_USER} --build-arg GITHUB_TOKEN=${GITHUB_OAUTH} -t ${IMAGE_NAME} -t motivlabs/fluentd:latest .
+            docker build --build-arg GITHUB_USER=${GITHUB_COMMIT_USER} --build-arg GITHUB_TOKEN=${GITHUB_OAUTH} -t ${IMAGE_NAME} -t motivlabs/fluentd:impulse-latest .
             echo "Finished Building Service Image"
 
             echo "Pushing Service Images to Docker Hub"
@@ -20,7 +20,7 @@ jobs:
             docker push $IMAGE_NAME
             echo "Pushed Extended Image Name"
 
-            docker push motivlabs/fluentd-impulse:latest
+            docker push motivlabs/fluentd:impulse-latest
             echo "Pushed Latest Image Name"
 
             echo "Running Script to Update Impulse Docker-Compose with Correct Image"
