@@ -23,11 +23,13 @@ jobs:
             docker push motivlabs/fluentd:impulse-latest
             echo "Pushed Latest Image Name"
 
-            COMMIT=$(git log --format=oneline -n 1 $CIRCLE_SHA1)
+            echo "export COMMIT=\"$(git log --format=oneline -n 1 $CIRCLE_SHA1)\"" >> ~/.bashrc
+            echo commit message is: ${COMMIT}
 
             echo "Running Script to Update Impulse Docker-Compose with Correct Image"
             .circleci/update-impulse.sh "fluentd-impulse" ${IMAGE_NAME} ${GITHUB_OAUTH} ${COMMIT}
             echo "Impulse Updated"
+
 
 workflows:
   version: 2
