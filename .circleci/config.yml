@@ -1,0 +1,40 @@
+jobs:
+  build:
+    machine:
+      image: ubuntu-1604:202004-01
+    resource_class: large
+    steps:
+      - checkout
+      - run:
+          name: Running Integration Test and Push Images
+          command: |
+            echo "Logging in to Docker Hub"
+            docker login --username ${DOCKERHUB_USERNAME} --password ${DOCKERHUB_PASSWORD}
+
+            echo "building image"
+            IMAGE_NAME="motivlabs/fluentd-impulse:$(date +%Y%m%d%H%M%S)-${CIRCLE_SHA1:0:6}"
+            docker build --build-arg GITHUB_USER=${GITHUB_COMMIT_USER} --build-arg GITHUB_TOKEN=${GITHUB_OAUTH} -t ${IMAGE_NAME} -t motivlabs/fluentd-impulse:latest .
+            echo "Finished Building Service Image"
+
+            echo "Pushing Service Images to Docker Hub"
+
+            docker push $IMAGE_NAME
+            echo "Pushed Extended Image Name"
+
+            docker push motivlabs/fluentd-impulse:latest
+            echo "Pushed Latest Image Name"
+
+            echo "Running Script to Update Impulse Docker-Compose with Correct Image"
+            .circleci/update-impulse.sh "fluentd-impulse" ${IMAGE_NAME} ${GITHUB_OAUTH}
+            echo "Impulse Updated"
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build:
+          context: MotivLabs
+          filters:
+            branches:
+              only:
+                - master

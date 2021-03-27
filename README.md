@@ -12,6 +12,13 @@ This project is working and has been tested with the versions:
 - Apache Cassandra (3.0.9 y  CQL spec 3.4.0)
 - Fluentd (0.14.11):
 
+# Docker build
+```
+export GITHUB_USER=<GITHUB_USER> \
+export GITHUB_TOKEN=<GITHUB_TOKEN> \
+docker build --build-arg GITHUB_USER=${GITHUB_USER} --build-arg GITHUB_TOKEN=${GITHUB_TOKEN} -t motivlabs/fluentd-impulse:$(date +%Y%m%d%H%M%S) .
+```
+
 # Installation
 
 ```
